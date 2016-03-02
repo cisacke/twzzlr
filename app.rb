@@ -1,6 +1,14 @@
+# Gems
 require 'carrierwave'
 require 'carrierwave/orm/activerecord'
 require 'dotenv'
+require 'sinatra'
+require 'sinatra/base'
+
+# Models
+require './models/user.rb'
+require './models/image.rb'
+
 Dotenv.load
 
 CarrierWave.configure do |config|
@@ -14,16 +22,30 @@ CarrierWave.configure do |config|
   config.fog_public = true
 end
 
-class MyUploader < CarrierWave::Uploader::Base
-  storage :fog
-end
-
-class Image < ActiveRecord::Base
-    mount_uploader :image, MyUploader
-end
-
 class Twzzlr < Sinatra::Base
-    get '/' do
+    get '/' do 
+        erb :'sessions/new'
+    end
+    
+    post '/user' do
+        @user = User.new
+        @user.password = params[:user][:password]
+        @user.username = params[:user][:username]
+        puts @user.username
+        puts @user.password
+        if @user.save
+            sign_in!(@user)
+            redirect to('/twzzlz')
+        else
+            puts 'uh oh'
+        end
+
+    end
+    
+    get '/twzzlz' do
+        session[:token] ||= SecureRandom::urlsafe_base64
+        puts session[:token].inspect
+
         @twzzlz = Image.all
         erb :'twzzlz/index'
     end
@@ -35,4 +57,27 @@ class Twzzlr < Sinatra::Base
         twzzl.save
         redirect to('/')
     end
+    
+    post '/twzzl/:id/unwrap' do
+        puts params[:id]
+        unwrap = Unwrap.where("image_id = :image_id", {image_id: params[:id], session: session[:token]})
+        if unwrap.length != 0
+            puts 'unwrap!'
+            unwrap.destroy
+        else
+            puts 'no unwrap!'
+            unwrap = Unwrap.new
+            unwrap.image_id = params[:id]
+            unwrap.session = session[:token]
+            unwrap.save
+        end
+        redirect to('/')
+    end
+    
+    private
+    
+    def user_params
+        params.require(:user).permit(:username, :password)
+    end
+    
 end

@@ -8,3 +8,7 @@ gem "carrierwave"
 gem "fog"
 gem 'rack', '1.5.2'
 gem 'dotenv', :groups => [:development]
+gem 'rack_csrf'
+gem 'sinatra-contrib'
+gem 'bcrypt'
+gem 'sinatra-strong-params'

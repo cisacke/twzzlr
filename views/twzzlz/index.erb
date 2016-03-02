@@ -1,7 +1,12 @@
-<form action="/" method="post" enctype="multipart/form-data"></div>
+<form action="/" method="post" enctype="multipart/form-data">
     <input type="file" name="image" />
+    <%= Rack::Csrf.tag(env) %>
     <input type="submit" name="submit" value="Upload" />
 </form>
 <% @twzzlz.each do |twzzl| %>
   <img src="<%= twzzl.image.url %>" />
+  <form action="twzzl/<%=twzzl.id%>/unwrap" method="post">
+      <%= Rack::Csrf.tag(env) %>
+      <input type="submit" name="unwrap" value="Unwrap">
+  </form>
 <% end %>

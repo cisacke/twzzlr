@@ -1,0 +1,10 @@
+<form action="user" method="post">
+    <%= Rack::Csrf.tag(env) %>
+    
+    <input type="text" name="user[username]" placeholder="username">
+    <br>
+    <input type="password" name="user[password]" placeholder="password">
+    <br>
+    <button type="submit">sign up </button>
+    
+</form>
