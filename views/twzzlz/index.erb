@@ -1,13 +1,23 @@
-<form action="/" method="post" enctype="multipart/form-data">
-    <input type="file" name="image" />
-    <%= Rack::Csrf.tag(env) %>
-    <input type="submit" name="submit" value="Upload" />
-</form>
+<h1>Twzzlr</h1>
+<% if @user %>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" />
+        <%= Rack::Csrf.tag(env) %>
+        <input type="submit" name="submit" value="Upload" />
+    </form>
+<% end %>
 <% @twzzlz.each do |twzzl| %>
   <img src="<%= twzzl.image.url %>" />
   <form action="twzzl/<%=twzzl.id%>/unwrap" method="post">
       <%= Rack::Csrf.tag(env) %>
       <input type="submit" name="unwrap" value="Unwrap">
+  </form>
+  <form action="twzzl/<%=twzzl.id%>" method="post">
+      <%= Rack::Csrf.tag(env) %>
+      <input type="hidden" name="_method" value="delete">
+      <% if @user && @user.id == twzzl.user_id %>
+        <input type="submit" name="delete" value="Delete">
+      <% end %>  
   </form>
 <% end %>
 <% if @user %>

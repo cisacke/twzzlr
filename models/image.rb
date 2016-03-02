@@ -1,5 +1,7 @@
 require 'carrierwave'
 require 'carrierwave/orm/activerecord'
+require './models/unwrap.rb'
+require './models/user.rb'
 
 class MyUploader < CarrierWave::Uploader::Base
   storage :fog

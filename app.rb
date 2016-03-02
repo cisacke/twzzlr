@@ -44,6 +44,13 @@ class Twzzlr < Sinatra::Base
         end
     end
     
+    before '/session/new' do 
+        @user = currently_signed_in
+        if @user
+            redirect to('/twzzlz')
+        end
+    end
+    
     get '/session/new' do
         erb :'sessions/new'
     end
@@ -69,17 +76,24 @@ class Twzzlr < Sinatra::Base
         session[:token] ||= SecureRandom::urlsafe_base64
         puts session[:token].inspect
 
-        @twzzlz = Image.all
+        @twzzlz = Image.all.order(created_at: :desc)
         @user = currently_signed_in
         erb :'twzzlz/index'
     end
     
     post '/' do
         twzzl = Image.new
-        puts params[:image]
         twzzl.image = params[:image]
+        twzzl.user_id = currently_signed_in.id
         twzzl.save
-        redirect to('/')
+        redirect to('/twzzlz')
+    end
+    
+    delete '/twzzl/:id' do
+        @twzzl = Image.find(params[:id])
+        puts @twzzl
+        @twzzl.destroy
+        redirect to('/twzzlz')
     end
     
     post '/twzzl/:id/unwrap' do
