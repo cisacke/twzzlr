@@ -10,3 +10,10 @@
       <input type="submit" name="unwrap" value="Unwrap">
   </form>
 <% end %>
+<% if @user %>
+    <form action="/session" method="post">
+        <input type="hidden" name="_method" value="delete">
+        <%= Rack::Csrf.tag(env) %>
+        <button type="submit" name="button">sign out</button>
+    </form>   
+<% end %> 

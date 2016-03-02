@@ -9,6 +9,9 @@ require 'sinatra/base'
 require './models/user.rb'
 require './models/image.rb'
 
+# Controllers
+require './controllers/application_controller.rb'
+
 Dotenv.load
 
 CarrierWave.configure do |config|
@@ -23,11 +26,11 @@ CarrierWave.configure do |config|
 end
 
 class Twzzlr < Sinatra::Base
-    get '/' do 
-        erb :'sessions/new'
+    get '/users/new' do 
+        erb :'users/new'
     end
     
-    post '/user' do
+    post '/users' do
         @user = User.new
         @user.password = params[:user][:password]
         @user.username = params[:user][:username]
@@ -39,7 +42,27 @@ class Twzzlr < Sinatra::Base
         else
             puts 'uh oh'
         end
-
+    end
+    
+    get '/session/new' do
+        erb :'sessions/new'
+    end
+    
+    post '/session' do
+        @user = User.find_by_credentials(params[:user][:username],
+                                         params[:user][:password])
+    
+        if @user
+            sign_in!(@user)
+            redirect to('/twzzlz')
+        else
+            puts 'uh oh!'
+        end
+    end
+    
+    delete '/session' do
+        sign_out!
+        redirect to('/twzzlz')
     end
     
     get '/twzzlz' do
@@ -47,6 +70,7 @@ class Twzzlr < Sinatra::Base
         puts session[:token].inspect
 
         @twzzlz = Image.all
+        @user = currently_signed_in
         erb :'twzzlz/index'
     end
     
