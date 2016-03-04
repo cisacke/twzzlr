@@ -1,4 +1,8 @@
-<form action="/users" method="post">
+
+<p>
+    <%= styled_flash %>
+</p>
+<form action="/users/new" method="post">
     <%= Rack::Csrf.tag(env) %>
     SIGN UP
     <input type="text" name="user[username]" placeholder="username">

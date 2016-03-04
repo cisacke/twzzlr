@@ -1,4 +1,7 @@
-<form action="/session" method="post">
+<p>
+    <%= styled_flash %>
+</p>
+<form action="/session/new" method="post">
     <%= Rack::Csrf.tag(env) %>
     SIGN IN
     <input type="text" name="user[username]" placeholder="username">

@@ -10,6 +10,8 @@ end
 
 def currently_signed_in
     return nil unless session[:session_token]
+    @user = User.find_by(session_token: session[:session_token])
+    puts @user.username
     @currently_signed_in ||= User.find_by(session_token: session[:session_token])
 end
 

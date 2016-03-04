@@ -1,0 +1,29 @@
+body, p, img, html, ul, li, h3, nav, h1, form, div, h5, a, figure, button {
+   border: 0px;
+   padding: 0px;
+   margin: 0px;
+
+   font: inherit;
+   text-decoration: inherit;
+   text-align: inherit;
+   color: inherit;
+ }
+
+ body, html {
+   font-family: sans-serif;
+   height: 100%;
+ }
+ 
+ body {
+
+ }
+
+ ul {
+   list-style: none;
+ }
+
+ .group:after {
+   content: "";
+   clear: both;
+   display: block;
+ }

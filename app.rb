@@ -4,6 +4,7 @@ require 'carrierwave/orm/activerecord'
 require 'dotenv'
 require 'sinatra'
 require 'sinatra/base'
+require 'sinatra/flash'
 
 # Models
 require './models/user.rb'
@@ -26,21 +27,31 @@ CarrierWave.configure do |config|
 end
 
 class Twzzlr < Sinatra::Base
+    # enable :sessions
+    register Sinatra::Flash
+    
     get '/users/new' do 
         erb :'users/new'
     end
     
-    post '/users' do
-        @user = User.new
-        @user.password = params[:user][:password]
-        @user.username = params[:user][:username]
-        puts @user.username
-        puts @user.password
+    post '/time' do
+        flash[:time] = "hello"
+        redirect '/twzzlz'
+    end
+    
+    post '/users/new' do
+        @user = User.new(params[:user])
         if @user.save
             sign_in!(@user)
             redirect to('/twzzlz')
         else
-            puts 'uh oh'
+            if @user.errors.messages[:password]
+                flash.now[:password] = @user.errors.messages[:password]
+            end
+            if @user.errors.messages[:username]
+                flash.now[:username] = @user.errors.messages[:username]
+            end
+            erb :'users/new'
         end
     end
     
@@ -51,11 +62,18 @@ class Twzzlr < Sinatra::Base
         end
     end
     
+    before '/users/new' do
+        @user = currently_signed_in
+        if @user
+            redirect to('/twzzlz')
+        end
+    end
+    
     get '/session/new' do
         erb :'sessions/new'
     end
     
-    post '/session' do
+    post '/session/new' do
         @user = User.find_by_credentials(params[:user][:username],
                                          params[:user][:password])
     
@@ -63,7 +81,8 @@ class Twzzlr < Sinatra::Base
             sign_in!(@user)
             redirect to('/twzzlz')
         else
-            puts 'uh oh!'
+            flash.now[:errors] = "Invalid username/password combination"
+            erb :'sessions/new'
         end
     end
     
@@ -78,6 +97,8 @@ class Twzzlr < Sinatra::Base
 
         @twzzlz = Image.all.order(created_at: :desc)
         @user = currently_signed_in
+        puts "USER"
+        puts @user
         erb :'twzzlz/index'
     end
     
@@ -91,7 +112,6 @@ class Twzzlr < Sinatra::Base
     
     delete '/twzzl/:id' do
         @twzzl = Image.find(params[:id])
-        puts @twzzl
         @twzzl.destroy
         redirect to('/twzzlz')
     end
