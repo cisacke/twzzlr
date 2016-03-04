@@ -12,6 +12,7 @@ require './models/image.rb'
 
 # Controllers
 require './controllers/application_controller.rb'
+register Sinatra::Sprockets
 
 Dotenv.load
 
@@ -97,8 +98,6 @@ class Twzzlr < Sinatra::Base
 
         @twzzlz = Image.all.order(created_at: :desc)
         @user = currently_signed_in
-        puts "USER"
-        puts @user
         erb :'twzzlz/index'
     end
     

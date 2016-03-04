@@ -10,7 +10,8 @@ Bundler.require
 require './app'
 
 # Models
-# require './models/video'
+# require './models/video' ** this is probably where you should require models etc **
+
 use Rack::Session::Cookie
 use Rack::Csrf
 use Rack::MethodOverride
