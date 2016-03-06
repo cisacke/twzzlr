@@ -1,8 +1,9 @@
 var Backbone = require('backbone');
-// var TwzzlzIndexTpl = require('./../../templates/twzzlz/index.html');
 var _ = require('underscore');
+var CompositeView = require('./../../utils/composite');
+var TwzzlShow = require('./show');
 
-var TwzzlzIndex = Backbone.View.extend({
+var TwzzlzIndex = CompositeView.extend({
     template: JST['templates/index'],
     
     initialize: function(){
@@ -10,12 +11,18 @@ var TwzzlzIndex = Backbone.View.extend({
     },
     
     render: function() {
-        debugger
         var content = this.template({
             twzzlz: this.collection
         });
-        console.log(this.template);
         this.$el.html(content);
+        
+        _.forEach(this.collection, function(twzzl){
+            var twzzlShow = new TwzzlShow({
+                model: twzzl
+            });
+
+            this.addSubview('.twzzl-show', twzzlShow);
+        }.bind(this));
         return this;
     }
 });

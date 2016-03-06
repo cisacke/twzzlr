@@ -8,7 +8,7 @@ var Twzzlz = Backbone.Collection.extend({
 });
 
 module.exports = Twzzlz;
-},{"./../models/twzzl":2,"backbone":6}],2:[function(require,module,exports){
+},{"./../models/twzzl":2,"backbone":8}],2:[function(require,module,exports){
 var Backbone = require('backbone');
 
 var Twzzl = Backbone.Model.extend({
@@ -16,7 +16,7 @@ var Twzzl = Backbone.Model.extend({
 });
 
 module.exports = Twzzl;
-},{"backbone":6}],3:[function(require,module,exports){
+},{"backbone":8}],3:[function(require,module,exports){
 var Backbone = require('backbone');
 var $ = require('jquery');
 var Twzzlz = require('./../collections/twzzlz');
@@ -55,7 +55,7 @@ module.exports = Backbone.Router.extend({
 });
 
 
-},{"./../collections/twzzlz":1,"./../views/twzzlz/index":5,"backbone":6,"jquery":7}],4:[function(require,module,exports){
+},{"./../collections/twzzlz":1,"./../views/twzzlz/index":6,"backbone":8,"jquery":9}],4:[function(require,module,exports){
 $ = jQuery = require('jquery');
 var Router = require('./routers/app_router');
 var Backbone = require('backbone');
@@ -80,12 +80,109 @@ $(document).ready(function(){
     console.log('heelo');
     Twzzlr.initialize();
 });
-},{"./routers/app_router":3,"backbone":6,"jquery":7}],5:[function(require,module,exports){
+},{"./routers/app_router":3,"backbone":8,"jquery":9}],5:[function(require,module,exports){
 var Backbone = require('backbone');
-// var TwzzlzIndexTpl = require('./../../templates/twzzlz/index.html');
-var _ = require('underscore');
+var $ = require('jquery');
 
-var TwzzlzIndex = Backbone.View.extend({
+var CompositeView = Backbone.View.extend({
+  addSubview: function (selector, subview, prepend) {
+    if (prepend) {
+      this.subviews(selector).unshift(subview);
+    } else {
+      this.subviews(selector).push(subview);
+    }
+    this.attachSubview(selector, subview, prepend);
+    subview.render();
+  },
+
+  attachSubview: function (selector, subview, prepend) {
+    if (prepend) {
+      this.$(selector).prepend(subview.$el);
+    } else {
+      this.$(selector).append(subview.$el);
+    }
+
+    subview.delegateEvents();
+
+    if (subview.attachSubviews) {
+      subview.attachSubviews();
+    }
+  },
+
+  attachSubviews: function () {
+    var view = this;
+    this.subviews().each(function (selectorSubviews, selector) {
+      view.$(selector).empty();
+      selectorSubviews.each(function (subview) {
+        view.attachSubview(selector, subview);
+      });
+    });
+  },
+
+  eachSubview: function(callback) {
+    this.subviews().each(function (selectorSubviews, selector) {
+      selectorSubviews.each(function (subview) {
+        callback(subview, selector);
+      });
+    });
+  },
+
+  onRender: function() {
+    this.eachSubview(function (subview) {
+      subview.onRender && subview.onRender();
+    });
+  },
+
+  remove: function () {
+    Backbone.View.prototype.remove.call(this);
+    this.eachSubview(function (subview) {
+      subview.remove();
+    });
+  },
+
+  removeSubview: function (selector, subview) {
+    subview.remove();
+
+    var selectorSubviews = this.subviews(selector);
+    selectorSubviews.splice(selectorSubviews.indexOf(subview), 1);
+  },
+
+  removeModelSubview: function (selector, model) {
+    var selectorSubviews = this.subviews(selector);
+    var i = selectorSubviews.findIndex(function (subview) {
+      return subview.model === model;
+    });
+    if (i === -1) { return; }
+
+    selectorSubviews.toArray()[i].remove();
+    selectorSubviews.splice(i, 1);
+  },
+
+  subviews: function (selector) {
+
+    this._subviews = this._subviews || {};
+
+    if (selector) {
+      this._subviews[selector] = this._subviews[selector] || _([]);
+      return this._subviews[selector];
+    } else {
+      return _(this._subviews);
+    }
+  },
+
+  unshiftSubview: function (selector, subview) {
+    this.addSubview(selector, subview, true);
+  }
+});
+
+module.exports = CompositeView;
+},{"backbone":8,"jquery":9}],6:[function(require,module,exports){
+var Backbone = require('backbone');
+var _ = require('underscore');
+var CompositeView = require('./../../utils/composite');
+var TwzzlShow = require('./show');
+
+var TwzzlzIndex = CompositeView.extend({
     template: JST['templates/index'],
     
     initialize: function(){
@@ -93,18 +190,46 @@ var TwzzlzIndex = Backbone.View.extend({
     },
     
     render: function() {
-        debugger
         var content = this.template({
             twzzlz: this.collection
         });
-        console.log(this.template);
         this.$el.html(content);
+        
+        _.forEach(this.collection, function(twzzl){
+            var twzzlShow = new TwzzlShow({
+                model: twzzl
+            });
+            // debugger
+            this.addSubview('.twzzl-show', twzzlShow);
+        }.bind(this));
         return this;
     }
 });
 
 module.exports = TwzzlzIndex;
-},{"backbone":6,"underscore":8}],6:[function(require,module,exports){
+},{"./../../utils/composite":5,"./show":7,"backbone":8,"underscore":10}],7:[function(require,module,exports){
+var Backbone = require('backbone');
+var _ = require('underscore');
+
+var TwzzlShow = Backbone.View.extend({
+    template: JST['templates/show'],
+    
+    initialize: function(){
+        this.listenTo(this.model, 'sync', this.render);
+    },
+    
+    render: function(){
+        var content = this.template({
+            model: this.model
+        });
+        
+        this.$el.html(content);
+        return this;
+    }
+});
+
+module.exports = TwzzlShow;
+},{"backbone":8,"underscore":10}],8:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 
@@ -2027,7 +2152,7 @@ module.exports = TwzzlzIndex;
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":7,"underscore":8}],7:[function(require,module,exports){
+},{"jquery":9,"underscore":10}],9:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.2.1
  * http://jquery.com/
@@ -11860,7 +11985,7 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
