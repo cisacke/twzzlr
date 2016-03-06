@@ -1,0 +1,31 @@
+{
+  "name": "twzzlr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "twzzlr.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cisacke/twzzlr.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cisacke/twzzlr/issues"
+  },
+  "homepage": "https://github.com/cisacke/twzzlr#readme",
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "browserify": "^11.0.1",
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-connect": "^2.2.0",
+    "gulp-ejs": "^2.1.1",
+    "gulp-open": "^1.0.0",
+    "reactify": "^1.1.1",
+    "underscore": "^1.8.3",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

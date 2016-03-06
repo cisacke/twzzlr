@@ -1,0 +1,87 @@
+.index-view {
+    background-image: url("http://algetler.com/wp-content/uploads/2013/12/twizzlers-cherry-licorice-twists-ff-131429-w.jpg");
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: 150px;
+}
+
+.header {
+    height: 50px;
+    background: #F5F8FA;
+}
+
+.nav {
+    min-width: 900px;
+    max-width: 1200px;
+    background: #F5F8FA;
+    color: black;
+    margin: auto;
+    position: relative;
+    height: 50px;
+}
+
+.nav-left {
+    float: left;
+}
+
+.logo {
+    height: 35px;
+    width: 120px;
+    padding: 7.5px;
+}
+
+.logo div {
+    background-image: url("http://i.imgur.com/EIOYp5K.png");
+    background-size: 100% 100%;
+    height: 100%;
+}
+
+.nav-right {
+    float: right;
+}
+
+.upload-image {
+    width: 900px;
+    background: white;
+    color: black;
+    position: relative;
+    margin: auto;
+    height: 100px;
+}
+
+.twzzlz-list-view {
+    /*background image of twizzlers*/
+}
+
+.twzzl-list {
+    width: 900px;
+    background: #F5F8FA;
+    margin: auto;
+    position: relative;
+}
+
+.twzzl {
+    width: 600px;
+    margin: auto;
+    position: relative;
+}
+
+.twzzl-image {
+}
+
+.twzzl-image img {
+    width: 100%;
+}
+
+.sign-out {
+    height: 20px;
+    padding: 15px;
+}
+.sign-out button {
+    background: #F5F8FA;
+}
+
+.sign-out button:hover {
+    cursor: pointer;
+}

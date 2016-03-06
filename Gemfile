@@ -14,3 +14,8 @@ gem 'bcrypt'
 gem 'sinatra-strong-params'
 gem 'sinatra-flash'
 gem 'sinatra-sprockets-ext'
+gem 'jbuilder'
+gem 'json'
+gem "tilt-jbuilder", ">= 0.4.0", :require => "sinatra/jbuilder"
+gem "hashie"
+gem 'sinatra-backbone'

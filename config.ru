@@ -7,9 +7,12 @@ require 'rack/csrf'
 Bundler.require
 
 # Controllers
-require './app'
+require './twzzlr/app'
 
 # Models
+require './twzzlr/models/image.rb'
+require './twzzlr/models/unwrap.rb'
+require './twzzlr/models/user.rb'
 # require './models/video' ** this is probably where you should require models etc **
 
 use Rack::Session::Cookie
